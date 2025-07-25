@@ -275,7 +275,7 @@ function init() {
 function initializeMode() {
     if (document.body.classList.contains('brother-mode')) {
         // お兄ちゃんモード
-        appTitle.textContent = 'さんすうチャレンジ';
+        appTitle.textContent = 'せんちゃん さんすうチャレンジ';
         switchModeBtn.textContent = '妹モードへ';
         currentProblems = brotherProblems;
         randomModeBtn.click(); // らんだむモードを強制

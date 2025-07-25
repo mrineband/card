@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>さんすう 計算カード</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>さんすう カード</h1>
+
+        <div class="mode-selector">
+            <button id="sequential-mode-btn" class="mode-btn">じゅんばん</button>
+            <button id="random-mode-btn" class="mode-btn active">ランダム</button>
+        </div>
+
+        <div id="sequential-settings" class="hidden">
+            <h2>じゅんばんモード設定</h2>
+            <div class="setting-group">
+                <label>① けいさんを えらぶ</label>
+                <div>
+                    <button class="op-btn active" data-op="add">たしざん</button>
+                    <button class="op-btn" data-op="subtract">ひきざん</button>
+                </div>
+            </div>
+            <div class="setting-group">
+                <label for="number-select">② さいしょの かずを えらぶ</label>
+                <select id="number-select">
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                </select>
+            </div>
+            <button id="start-btn">このじょうけんで はじめる</button>
+        </div>
+
+        <div id="card-wrapper">
+            <div id="card">
+                <div id="question">
+                    <p>モードを えらんでね</p>
+                </div>
+            </div>
+            <div id="options-container"></div>
+        </div>
+    </div>
+
+    <div id="session-summary" class="hidden">
+        <div class="summary-box">
+            <h2 id="summary-comment"></h2>
+            <p id="summary-score"></p>
+            <div class="summary-buttons">
+                <button id="continue-btn">このままで つづける</button>
+                <button id="new-problem-btn">あたらしく えらぶ</button>
+            </div>
+        </div>
+    </div>
+
+
+    <audio id="correct-sound" src="correct.mp3" preload="auto"></audio>
+    <audio id="incorrect-sound" src="incorrect.mp3" preload="auto"></audio>
+
+    <script src="script.js"></script>
+</body>
+</html>

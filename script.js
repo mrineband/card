@@ -243,12 +243,12 @@ function init() {
 
 function initializeMode() {
     if (document.body.classList.contains('brother-mode')) {
-        appTitle.textContent = 'さんすうチャレンジ';
-        switchModeBtn.textContent = '妹モードへ';
+        appTitle.textContent = 'せんちゃん さんすうチャレンジ';
+        switchModeBtn.textContent = 'いもうとモードへ';
         currentProblems = brotherProblems;
         randomModeBtn.click();
     } else {
-        appTitle.textContent = 'さんすうカード';
+        appTitle.textContent = 'しのちゃん さんすうカード';
         switchModeBtn.textContent = 'お兄ちゃんモードへ';
         currentProblems = sisterProblems;
         // ↓ 妹モードの初期状態では「らんだむ」を押す

@@ -397,3 +397,31 @@ body.brother-mode {
 .brother-mode #sequential-settings {
     display: none !important;
 }
+/* --- ここから履歴表示用のスタイルを追加 --- */
+
+#history-tracker {
+    display: flex;
+    justify-content: center;
+    gap: 8px; /* アイコンの隙間 */
+    height: 30px;
+    margin-bottom: 10px;
+}
+
+.history-icon {
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.history-correct {
+    color: #673ab7; /* 妹モードの正解色 */
+}
+
+.history-incorrect {
+    color: #f44336; /* 共通の不正解色 */
+}
+
+/* お兄ちゃんモードの時の正解色の上書き */
+.brother-mode .history-correct {
+    color: #4caf50;
+}

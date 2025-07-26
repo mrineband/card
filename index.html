@@ -1,24 +1,22 @@
 <!DOCTYPE html>
 <html lang="ja">
-    
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>しのちゃん さんすう 計算カード</title>
-    <link rel="stylesheet" href="style.css?v=2">
+    <title>さんすう 計算カード</title>
+    <link rel="stylesheet" href="style.css?v=20250726">
 </head>
 <body>
 
     <div class="container">
-        <h1 id="app-title">しのちゃん さんすうカード</h1>
-        <button id="switch-mode-btn">お兄ちゃんモードへ</button> <div class="mode-selector">
+        <h1 id="app-title">さんすうカード</h1>
+        <div class="mode-selector">
             <button id="sequential-mode-btn" class="mode-btn">じゅんばん</button>
             <button id="random-mode-btn" class="mode-btn active">ランダム</button>
         </div>
-        
         <div id="sequential-settings" class="hidden">
             <h2>じゅんばんモード設定</h2>
             <div class="setting-group">
@@ -31,8 +29,17 @@
             <div class="setting-group">
                 <label for="number-select">② さいしょの かずを えらぶ</label>
                 <select id="number-select">
-                    <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option>
-                </select>
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    </select>
             </div>
             <button id="start-btn">このじょうけんで はじめる</button>
         </div>
@@ -47,6 +54,7 @@
             <div id="options-container"></div>
         </div>
     </div>
+    
     <div id="session-summary" class="hidden">
         <div class="summary-box">
             <div id="math-result">
@@ -76,11 +84,13 @@
         </div>
     </div>
 
+    <button id="switch-mode-btn">お兄ちゃんモードへ</button>
+
     <audio id="correct-sound" src="correct.mp3" preload="auto"></audio>
     <audio id="incorrect-sound" src="incorrect.mp3" preload="auto"></audio>
     <audio id="whack-sound" src="whack.mp3" preload="auto"></audio>
     <audio id="fanfare-sound" src="fanfare.mp3" preload="auto"></audio>
     
-    <script src="script.js?v=3"></script>
+    <script src="script.js?v=20250726"></script>
 </body>
 </html>

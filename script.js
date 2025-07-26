@@ -1,6 +1,4 @@
-// HTML要素を取得 (historyTrackerを追加)
-const historyTracker = document.getElementById('history-tracker');
-// (他の要素取得は変更なし)
+// HTML要素を取得
 const sequentialModeBtn = document.getElementById('sequential-mode-btn');
 const randomModeBtn = document.getElementById('random-mode-btn');
 const cardWrapper = document.getElementById('card-wrapper');
@@ -31,14 +29,13 @@ const newProblemBtn = document.getElementById('new-problem-btn');
 const appTitle = document.getElementById('app-title');
 const switchModeBtn = document.getElementById('switch-mode-btn');
 
-
-// (変数の初期化は変更なし)
+// 変数の初期化
 let sisterProblems = [], brotherProblems = [], currentProblems = [];
 let currentProblem = {}, currentProblemIndex = -1, isAnswering = false;
 let questionsAnsweredInSession = 0, correctAnswersInSession = 0;
 let moleScore = 0, timeLeft = 15, moleTimerId = null, gameTimerId = null;
 
-// (問題生成関数は変更なし)
+// ■ 問題を生成する関数
 function generateSisterProblems() {
     const problems = [];
     for (let i = 0; i <= 10; i++) { for (let j = 0; j <= 10; j++) { if (i + j > 0 && i + j <= 10) { problems.push({ question: `${i} + ${j} =`, answer: i + j }); } } }
@@ -61,7 +58,7 @@ function generateSpecificProblems() {
     return generatedProblems;
 }
 
-// (UI更新関数は変更なし)
+// ■ UI（画面表示）を更新する関数
 function displayProblem() {
     isAnswering = false;
     if (randomModeBtn.classList.contains('active')) {
@@ -129,54 +126,36 @@ function showMathSummary() {
     sessionSummary.classList.remove('hidden');
 }
 
-// ▼▼▼ checkAnswer関数を修正 ▼▼▼
+// ■ イベント処理の関数
 function checkAnswer(selectedAnswer, button) {
     if (isAnswering) return;
     isAnswering = true;
-
-    // 履歴アイコンを作成
     const historyIcon = document.createElement('span');
     historyIcon.classList.add('history-icon');
-
     if (selectedAnswer === currentProblem.answer) {
-        correctAnswersInSession++;
-        correctSound.play();
-        button.classList.add('correct');
-        // 履歴アイコンを◯に設定
-        historyIcon.textContent = '◯';
-        historyIcon.classList.add('history-correct');
+        correctAnswersInSession++; correctSound.play(); button.classList.add('correct');
+        historyIcon.textContent = '◯'; historyIcon.classList.add('history-correct');
     } else {
-        incorrectSound.play();
-        button.classList.add('incorrect');
-        // 履歴アイコンを☓に設定
-        historyIcon.textContent = '☓';
-        historyIcon.classList.add('history-incorrect');
+        incorrectSound.play(); button.classList.add('incorrect');
+        historyIcon.textContent = '☓'; historyIcon.classList.add('history-incorrect');
     }
-    
-    // 作成した履歴アイコンを表示エリアに追加
     historyTracker.appendChild(historyIcon);
-
     setTimeout(() => {
         questionsAnsweredInSession++;
         if (!randomModeBtn.classList.contains('active')) {
             currentProblemIndex = (currentProblemIndex + 1) % currentProblems.length;
         }
-        if (questionsAnsweredInSession >= 10) {
-            showMathSummary();
-        } else {
-            displayProblem();
-        }
+        if (questionsAnsweredInSession >= 10) { showMathSummary(); }
+        else { displayProblem(); }
     }, 1000);
 }
-
-// ▼▼▼ resetSession関数を修正 ▼▼▼
 function resetSession() {
     questionsAnsweredInSession = 0;
     correctAnswersInSession = 0;
-    historyTracker.innerHTML = ''; // 履歴表示を空にする
+    historyTracker.innerHTML = '';
 }
 
-// (ゲーム関数は変更なし)
+// ■ もぐらたたきゲームの関数
 function startGame(duration) {
     fanfareSound.load();
     mathResult.classList.add('hidden');
@@ -225,7 +204,7 @@ function randomMole() {
     }, { once: true });
 }
 
-// (初期化関数は変更なし)
+// ■ 初期化とイベントリスナー
 function init() {
     sisterProblems = generateSisterProblems();
     brotherProblems = generateBrotherProblems();
@@ -255,6 +234,12 @@ function init() {
         sessionSummary.classList.add('hidden');
         resetSession();
         initializeMode();
+    });
+    opBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            opBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        });
     });
     initializeMode();
 }

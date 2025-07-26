@@ -1,4 +1,6 @@
-// (要素取得のコードは変更なし)
+// HTML要素を取得 (historyTrackerを追加)
+const historyTracker = document.getElementById('history-tracker');
+// (他の要素取得は変更なし)
 const sequentialModeBtn = document.getElementById('sequential-mode-btn');
 const randomModeBtn = document.getElementById('random-mode-btn');
 const cardWrapper = document.getElementById('card-wrapper');
@@ -28,6 +30,7 @@ const continueBtn = document.getElementById('continue-btn');
 const newProblemBtn = document.getElementById('new-problem-btn');
 const appTitle = document.getElementById('app-title');
 const switchModeBtn = document.getElementById('switch-mode-btn');
+
 
 // (変数の初期化は変更なし)
 let sisterProblems = [], brotherProblems = [], currentProblems = [];
@@ -126,32 +129,56 @@ function showMathSummary() {
     sessionSummary.classList.remove('hidden');
 }
 
-// (イベント処理関数は変更なし)
+// ▼▼▼ checkAnswer関数を修正 ▼▼▼
 function checkAnswer(selectedAnswer, button) {
     if (isAnswering) return;
     isAnswering = true;
+
+    // 履歴アイコンを作成
+    const historyIcon = document.createElement('span');
+    historyIcon.classList.add('history-icon');
+
     if (selectedAnswer === currentProblem.answer) {
-        correctAnswersInSession++; correctSound.play(); button.classList.add('correct');
+        correctAnswersInSession++;
+        correctSound.play();
+        button.classList.add('correct');
+        // 履歴アイコンを◯に設定
+        historyIcon.textContent = '◯';
+        historyIcon.classList.add('history-correct');
     } else {
-        incorrectSound.play(); button.classList.add('incorrect');
+        incorrectSound.play();
+        button.classList.add('incorrect');
+        // 履歴アイコンを☓に設定
+        historyIcon.textContent = '☓';
+        historyIcon.classList.add('history-incorrect');
     }
+    
+    // 作成した履歴アイコンを表示エリアに追加
+    historyTracker.appendChild(historyIcon);
+
     setTimeout(() => {
         questionsAnsweredInSession++;
         if (!randomModeBtn.classList.contains('active')) {
             currentProblemIndex = (currentProblemIndex + 1) % currentProblems.length;
         }
-        if (questionsAnsweredInSession >= 10) { showMathSummary(); }
-        else { displayProblem(); }
+        if (questionsAnsweredInSession >= 10) {
+            showMathSummary();
+        } else {
+            displayProblem();
+        }
     }, 1000);
 }
+
+// ▼▼▼ resetSession関数を修正 ▼▼▼
 function resetSession() {
     questionsAnsweredInSession = 0;
     correctAnswersInSession = 0;
+    historyTracker.innerHTML = ''; // 履歴表示を空にする
 }
 
-// ▼▼▼ BUG FIX 1: fanfare.mp3を事前に読み込む ▼▼▼
+// (ゲーム関数は変更なし)
 function startGame(duration) {
-    fanfareSound.load(); // ゲーム開始時に音を読み込み開始
+    fanfareSound.load();
     mathResult.classList.add('hidden');
     gameResult.classList.add('hidden');
     moleGame.classList.remove('hidden');
@@ -167,13 +194,11 @@ function startGame(duration) {
         if (timeLeft < 0) { endGame(); }
     }, 1000);
 }
-
-// (endGame, randomMole関数は変更なし)
 function endGame() {
     clearInterval(moleTimerId);
     clearInterval(gameTimerId);
     moleGame.classList.add('hidden');
-    fanfareSound.currentTime = 0; //念のため頭出し
+    fanfareSound.currentTime = 0;
     fanfareSound.play();
     setTimeout(() => {
         gameResult.classList.remove('hidden');
@@ -200,16 +225,14 @@ function randomMole() {
     }, { once: true });
 }
 
-// 初期化とイベントリスナー
+// (初期化関数は変更なし)
 function init() {
     sisterProblems = generateSisterProblems();
     brotherProblems = generateBrotherProblems();
-
     switchModeBtn.addEventListener('click', () => {
         document.body.classList.toggle('brother-mode');
         initializeMode();
     });
-
     sequentialModeBtn.addEventListener('click', () => { switchView('sequential-setup'); });
     randomModeBtn.addEventListener('click', () => {
         switchView('random');
@@ -217,12 +240,9 @@ function init() {
         resetSession();
         displayProblem();
     });
-    
-    // ▼▼▼ BUG FIX 2: 「じゅんばん」モードが正しく動くように修正 ▼▼▼
     startBtn.addEventListener('click', () => {
         currentProblems = generateSpecificProblems();
         if (currentProblems.length === 0) { alert('このじょうけんのもんだいは ありません。'); return; }
-        // ボタンの見た目を「じゅんばん」がアクティブになるように変更
         sequentialModeBtn.classList.add('active');
         randomModeBtn.classList.remove('active');
         currentProblemIndex = 0;
@@ -230,17 +250,14 @@ function init() {
         switchView('practice');
         displayProblem();
     });
-    
     continueBtn.addEventListener('click', () => { sessionSummary.classList.add('hidden'); resetSession(); displayProblem(); });
     newProblemBtn.addEventListener('click', () => {
         sessionSummary.classList.add('hidden');
         resetSession();
         initializeMode();
     });
-    
     initializeMode();
 }
-
 function initializeMode() {
     if (document.body.classList.contains('brother-mode')) {
         appTitle.textContent = 'せんちゃん さんすうチャレンジ';
@@ -251,9 +268,7 @@ function initializeMode() {
         appTitle.textContent = 'しのちゃん さんすうカード';
         switchModeBtn.textContent = 'お兄ちゃんモードへ';
         currentProblems = sisterProblems;
-        // ↓ 妹モードの初期状態では「らんだむ」を押す
         randomModeBtn.click();
     }
 }
-
 init();

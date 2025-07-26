@@ -1,8 +1,9 @@
-// HTML要素を取得
+// HTML要素を取得 (変更なし)
 const sequentialModeBtn = document.getElementById('sequential-mode-btn');
 const randomModeBtn = document.getElementById('random-mode-btn');
 const cardWrapper = document.getElementById('card-wrapper');
 const progressTracker = document.getElementById('progress-tracker');
+const historyTracker = document.getElementById('history-tracker');
 const questionEl = document.getElementById('question').querySelector('p');
 const optionsContainer = document.getElementById('options-container');
 const sequentialSettings = document.getElementById('sequential-settings');
@@ -29,34 +30,16 @@ const newProblemBtn = document.getElementById('new-problem-btn');
 const appTitle = document.getElementById('app-title');
 const switchModeBtn = document.getElementById('switch-mode-btn');
 
-// 変数の初期化
+// 変数の初期化 (変更なし)
 let sisterProblems = [], brotherProblems = [], currentProblems = [];
 let currentProblem = {}, currentProblemIndex = -1, isAnswering = false;
 let questionsAnsweredInSession = 0, correctAnswersInSession = 0;
 let moleScore = 0, timeLeft = 15, moleTimerId = null, gameTimerId = null;
 
-// 問題を生成する関数 (変更なし)
-function generateSisterProblems() {
-    const problems = [];
-    for (let i = 0; i <= 10; i++) { for (let j = 0; j <= 10; j++) { if (i + j > 0 && i + j <= 10) { problems.push({ question: `${i} + ${j} =`, answer: i + j }); } } }
-    for (let i = 0; i <= 10; i++) { for (let j = 0; j < i; j++) { problems.push({ question: `${i} - ${j} =`, answer: i - j }); } }
-    return problems;
-}
-function generateBrotherProblems() {
-    const problems = [];
-    for (let i = 0; i < 20; i++) { const num1 = Math.floor(Math.random() * 40) + 10; const num2 = Math.floor(Math.random() * 8) + 2; problems.push({ question: `${num1} × ${num2} =`, answer: num1 * num2 }); }
-    for (let i = 0; i < 20; i++) { const divisor = Math.floor(Math.random() * 8) + 2; const result = Math.floor(Math.random() * 15) + 2; const dividend = divisor * result; if (dividend >= 10 && dividend < 100) { problems.push({ question: `${dividend} ÷ ${divisor} =`, answer: result }); } }
-    for (let i = 0; i < 20; i++) { const num1 = (Math.floor(Math.random() * 90) + 10) / 10; const num2 = (Math.floor(Math.random() * 90) + 10) / 10; if (Math.random() > 0.5) { problems.push({ question: `${num1} + ${num2} =`, answer: parseFloat((num1 + num2).toFixed(1)) }); } else { const [n1, n2] = [Math.max(num1, num2), Math.min(num1, num2)]; problems.push({ question: `${n1} - ${n2} =`, answer: parseFloat((n1 - n2).toFixed(1)) }); } }
-    return problems;
-}
-function generateSpecificProblems() {
-    const selectedOp = document.querySelector('.op-btn.active').dataset.op;
-    const selectedNum = parseInt(numberSelect.value);
-    const generatedProblems = [];
-    if (selectedOp === 'add') { for (let i = 0; i <= 10 - selectedNum; i++) { if (selectedNum + i !== 0) { generatedProblems.push({ question: `${selectedNum} + ${i} =`, answer: selectedNum + i }); } } }
-    else { for (let i = 0; i < selectedNum; i++) { generatedProblems.push({ question: `${selectedNum} - ${i} =`, answer: selectedNum - i }); } }
-    return generatedProblems;
-}
+// 問題生成関数 (変更なし)
+function generateSisterProblems() { const p = []; for (let i = 0; i <= 10; i++) { for (let j = 0; j <= 10; j++) { if (i + j > 0 && i + j <= 10) { p.push({ q: `${i} + ${j} =`, a: i + j }); } } } for (let i = 0; i <= 10; i++) { for (let j = 0; j < i; j++) { p.push({ q: `${i} - ${j} =`, a: i - j }); } } return p.map(p => ({ question: p.q, answer: p.a })); }
+function generateBrotherProblems() { const p = []; for (let i = 0; i < 20; i++) { const n1 = Math.floor(Math.random() * 40) + 10, n2 = Math.floor(Math.random() * 8) + 2; p.push({ q: `${n1} × ${n2} =`, a: n1 * n2 }); } for (let i = 0; i < 20; i++) { const d = Math.floor(Math.random() * 8) + 2, r = Math.floor(Math.random() * 15) + 2, n1 = d * r; if (n1 >= 10 && n1 < 100) p.push({ q: `${n1} ÷ ${d} =`, a: r }); } for (let i = 0; i < 20; i++) { const n1 = (Math.floor(Math.random() * 90) + 10) / 10, n2 = (Math.floor(Math.random() * 90) + 10) / 10; if (Math.random() > 0.5) { p.push({ q: `${n1} + ${n2} =`, a: parseFloat((n1 + n2).toFixed(1)) }); } else { const [m1, m2] = [Math.max(n1, n2), Math.min(n1, n2)]; p.push({ q: `${m1} - ${m2} =`, a: parseFloat((m1 - m2).toFixed(1)) }); } } return p.map(p => ({ question: p.q, answer: p.a })); }
+function generateSpecificProblems() { const op = document.querySelector('.op-btn.active').dataset.op, num = parseInt(numberSelect.value), p = []; if (op === 'add') { for (let i = 0; i <= 10 - num; i++) { if (num + i !== 0) p.push({ q: `${num} + ${i} =`, a: num + i }); } } else { for (let i = 0; i < num; i++) { p.push({ q: `${num} - ${i} =`, a: num - i }); } } return p.map(p => ({ question: p.q, answer: p.a })); }
 
 // UI更新関数 (変更なし)
 function displayProblem() {
@@ -70,25 +53,19 @@ function displayProblem() {
     if (!currentProblem) { console.error("問題が見つかりません！"); return; }
     questionEl.textContent = currentProblem.question;
     progressTracker.textContent = `${questionsAnsweredInSession + 1} / 10 もんめ`;
-    const correctAnswer = currentProblem.answer;
-    const options = [correctAnswer];
+    const correctAnswer = currentProblem.answer; const options = [correctAnswer];
     while (options.length < 4) {
         let wrongAnswer;
-        if (Number.isInteger(correctAnswer)) { const offset = Math.floor(Math.random() * 20) - 10; wrongAnswer = correctAnswer + offset; }
-        else { const offset = (Math.floor(Math.random() * 20) - 10) / 10; wrongAnswer = parseFloat((correctAnswer + offset).toFixed(1)); }
+        if (Number.isInteger(correctAnswer)) { wrongAnswer = correctAnswer + Math.floor(Math.random() * 20) - 10; }
+        else { wrongAnswer = parseFloat((correctAnswer + (Math.floor(Math.random() * 20) - 10) / 10).toFixed(1)); }
         if (!options.includes(wrongAnswer) && wrongAnswer >= 0) { options.push(wrongAnswer); }
     }
-    options.sort(() => Math.random() - 0.5);
-    optionsContainer.innerHTML = '';
+    options.sort(() => Math.random() - 0.5); optionsContainer.innerHTML = '';
     options.forEach(option => { const button = document.createElement('button'); button.className = 'option-btn'; button.textContent = option; button.onclick = () => checkAnswer(option, button); optionsContainer.appendChild(button); });
 }
 function switchView(mode) {
-    if (mode === 'sequential-setup') {
-        sequentialSettings.classList.remove('hidden'); cardWrapper.classList.add('hidden'); sequentialModeBtn.classList.add('active'); randomModeBtn.classList.remove('active');
-    } else {
-        sequentialSettings.classList.add('hidden'); cardWrapper.classList.remove('hidden');
-        if (mode === 'random') { sequentialModeBtn.classList.remove('active'); randomModeBtn.classList.add('active'); }
-    }
+    if (mode === 'sequential-setup') { sequentialSettings.classList.remove('hidden'); cardWrapper.classList.add('hidden'); sequentialModeBtn.classList.add('active'); randomModeBtn.classList.remove('active'); }
+    else { sequentialSettings.classList.add('hidden'); cardWrapper.classList.remove('hidden'); if (mode === 'random') { sequentialModeBtn.classList.remove('active'); randomModeBtn.classList.add('active'); } }
 }
 function showMathSummary() {
     let comment, gameDuration = 15;
@@ -108,8 +85,7 @@ function showMathSummary() {
 function checkAnswer(selectedAnswer, button) {
     if (isAnswering) return;
     isAnswering = true;
-    const historyIcon = document.createElement('span');
-    historyIcon.classList.add('history-icon');
+    const historyIcon = document.createElement('span'); historyIcon.classList.add('history-icon');
     if (selectedAnswer === currentProblem.answer) {
         correctAnswersInSession++; correctSound.play(); button.classList.add('correct');
         historyIcon.textContent = '◯'; historyIcon.classList.add('history-correct');
@@ -124,11 +100,7 @@ function checkAnswer(selectedAnswer, button) {
         if (questionsAnsweredInSession >= 10) { showMathSummary(); } else { displayProblem(); }
     }, 1000);
 }
-function resetSession() {
-    questionsAnsweredInSession = 0;
-    correctAnswersInSession = 0;
-    historyTracker.innerHTML = '';
-}
+function resetSession() { questionsAnsweredInSession = 0; correctAnswersInSession = 0; historyTracker.innerHTML = ''; }
 
 // ゲーム関数 (変更なし)
 function startGame(duration) {
@@ -146,10 +118,8 @@ function endGame() {
 function randomMole() {
     const holes = document.querySelectorAll('.hole');
     holes.forEach(hole => hole.innerHTML = '');
-    const randomIndex = Math.floor(Math.random() * holes.length);
-    const randomHole = holes[randomIndex];
-    const moleEl = document.createElement('div');
-    moleEl.classList.add('mole');
+    const randomIndex = Math.floor(Math.random() * holes.length); const randomHole = holes[randomIndex];
+    const moleEl = document.createElement('div'); moleEl.classList.add('mole');
     randomHole.appendChild(moleEl);
     moleEl.addEventListener('click', (e) => {
         e.stopPropagation(); whackSound.currentTime = 0; whackSound.play(); moleScore++;
@@ -159,65 +129,109 @@ function randomMole() {
     }, { once: true });
 }
 
-// 初期化とイベントリスナー
-function init() {
-    sisterProblems = generateSisterProblems();
-    brotherProblems = generateBrotherProblems();
-    switchModeBtn.addEventListener('click', () => { document.body.classList.toggle('brother-mode'); initializeMode(); });
-    sequentialModeBtn.addEventListener('click', () => { switchView('sequential-setup'); });
-    randomModeBtn.addEventListener('click', () => { switchView('random'); currentProblemIndex = -1; resetSession(); displayProblem(); });
-    startBtn.addEventListener('click', () => {
-        currentProblems = generateSpecificProblems();
-        if (currentProblems.length === 0) { alert('このじょうけんのもんだいは ありません。'); return; }
-        sequentialModeBtn.classList.add('active'); randomModeBtn.classList.remove('active');
-        currentProblemIndex = 0; resetSession(); switchView('practice'); displayProblem();
-    });
-    continueBtn.addEventListener('click', () => { sessionSummary.classList.add('hidden'); resetSession(); displayProblem(); });
-    newProblemBtn.addEventListener('click', () => { sessionSummary.classList.add('hidden'); resetSession(); initializeMode(); });
-    opBtns.forEach(btn => { btn.addEventListener('click', () => { opBtns.forEach(b => b.classList.remove('active')); btn.classList.add('active'); }); });
-    initializeMode();
-}
+// ▼▼▼ 初期化とイベントリスナーのロジックを修正 ▼▼▼
 
-// ▼▼▼ この関数を修正 ▼▼▼
-function initializeMode() {
-    if (document.body.classList.contains('brother-mode')) {
-        // お兄ちゃんモードの初期化
+// 現在のモードに応じてUIと問題を設定する関数
+function setupMode(isBrother) {
+    if (isBrother) {
         appTitle.textContent = 'せんちゃん さんすうチャレンジ';
         switchModeBtn.textContent = '妹モードへ';
         currentProblems = brotherProblems;
-        randomModeBtn.click(); // お兄ちゃんは常にらんだむから
+        // お兄ちゃんモードは常に「らんだむ」
+        switchView('random');
+        currentProblemIndex = -1;
+        resetSession();
+        displayProblem();
     } else {
-        // 妹モードの初期化（ご要望の通りに変更）
-        appTitle.textContent = 'しのちゃん さんすうカード';
-        switchModeBtn.textContent = 'お兄ちゃんモードへ';
-        currentProblems = sisterProblems;
+        appTitle.textContent = 'しのちゃん スーパーさんすうカード';
+        switchModeBtn.textContent = '妹モードへ';
+        // 妹モードでは、まずモード選択画面を表示
+        sequentialSettings.classList.add('hidden');
+        cardWrapper.classList.add('hidden');
+        // デフォルトで「らんだむ」を選択状態にする
+        randomModeBtn.classList.add('active');
+        sequentialModeBtn.classList.remove('active');
+    }
+}
 
-        // --- ここから新しい初期化処理 ---
+// アプリケーションの初期化
+function init() {
+    // 問題リストを最初に一度だけ生成
+    sisterProblems = generateSisterProblems();
+    brotherProblems = generateBrotherProblems();
 
-        // 1. 「じゅんばん」モードをアクティブにする
+    // --- 各ボタンの役割を明確にする ---
+
+    // モード切り替えボタン（兄/妹）
+    switchModeBtn.addEventListener('click', () => {
+        document.body.classList.toggle('brother-mode');
+        setupMode(document.body.classList.contains('brother-mode'));
+    });
+
+    // 「じゅんばん」ボタン（妹モード専用）
+    sequentialModeBtn.addEventListener('click', () => {
+        switchView('sequential-setup');
+    });
+
+    // 「らんだむ」ボタン（妹モード専用）
+    randomModeBtn.addEventListener('click', () => {
+        currentProblems = sisterProblems; // 妹の問題をセット
+        switchView('random');
+        currentProblemIndex = -1;
+        resetSession();
+        displayProblem();
+    });
+
+    // 「このじょうけんで はじめる」ボタン（じゅんばんモード内）
+    startBtn.addEventListener('click', () => {
+        currentProblems = generateSpecificProblems();
+        if (currentProblems.length === 0) { alert('このじょうけんのもんだいは ありません。'); return; }
         sequentialModeBtn.classList.add('active');
         randomModeBtn.classList.remove('active');
-
-        // 2. たし算かひき算をランダムに選ぶ
-        opBtns.forEach(b => b.classList.remove('active')); // いったんリセット
-        const randomOpBtn = Math.random() < 0.5 ? opBtns[0] : opBtns[1];
-        randomOpBtn.classList.add('active');
-
-        // 3. 数字をランダムに選ぶ
-        // (問題が必ず存在する組み合わせになるまで繰り返す)
-        do {
-            const randomIndex = Math.floor(Math.random() * numberSelect.options.length);
-            numberSelect.selectedIndex = randomIndex;
-            // 4. 問題を生成してみる
-            currentProblems = generateSpecificProblems();
-        } while (currentProblems.length === 0);
-        
-        // 5. ゲームを開始する
         currentProblemIndex = 0;
         resetSession();
         switchView('practice');
         displayProblem();
-    }
+    });
+
+    // 結果画面のボタン
+    continueBtn.addEventListener('click', () => { sessionSummary.classList.add('hidden'); resetSession(); displayProblem(); });
+    newProblemBtn.addEventListener('click', () => {
+        sessionSummary.classList.add('hidden');
+        resetSession();
+        // 現在のモード（兄/妹）に応じて初期画面に戻る
+        setupMode(document.body.classList.contains('brother-mode'));
+    });
+    
+    // 計算方法選択ボタン（じゅんばんモード内）
+    opBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            opBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        });
+    });
+
+    // --- アプリの初回起動処理 ---
+    // 1. 妹モードで開始
+    currentProblems = sisterProblems;
+    // 2. ご要望通り、ランダムな設定の「じゅんばん」モードで自動開始
+    (function startWithRandomSequential() {
+        sequentialModeBtn.classList.add('active');
+        randomModeBtn.classList.remove('active');
+        opBtns.forEach(b => b.classList.remove('active'));
+        const randomOpBtn = Math.random() < 0.5 ? opBtns[0] : opBtns[1];
+        randomOpBtn.classList.add('active');
+        do {
+            const randomIndex = Math.floor(Math.random() * numberSelect.options.length);
+            numberSelect.selectedIndex = randomIndex;
+            currentProblems = generateSpecificProblems();
+        } while (currentProblems.length === 0);
+        
+        currentProblemIndex = 0;
+        resetSession();
+        switchView('practice');
+        displayProblem();
+    })();
 }
 
 init();
